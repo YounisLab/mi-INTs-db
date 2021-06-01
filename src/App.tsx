@@ -1,22 +1,16 @@
-import './App.css';
+import "./App.css";
+import { Layout } from "antd";
+import QueryTable from "./QueryTable";
+const { Header, Content } = Layout;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Header>Mi-INTs DB</Header>
+      <Content>
+        <QueryTable />
+      </Content>
+    </Layout>
   );
 }
 
