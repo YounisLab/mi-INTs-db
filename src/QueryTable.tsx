@@ -9,23 +9,22 @@ const searchBarStyle: CSS.Properties = {
   width: "40%",
 };
 const rowStyle: CSS.Properties = {
-  marginTop: "16px",
+  marginTop: "8px",
+  marginBottom: "8px",
   width: "100%",
 };
 
 function QueryTable() {
   const [result, setResult] = useState<Object[]>([]);
-  const [columns, setColumns] = useState<Object[]>([]);
+  const columns = [
+    { title: "Field", dataIndex: "field" },
+    { title: "Value", dataIndex: "value" },
+  ];
 
   const handleSearch = (gene: string) => {
     setResult(
-      mockResult.map((obj, idx) => {
-        return { ...obj, key: idx };
-      })
-    );
-    setColumns(
-      Object.keys(mockResult[0]).map((key) => {
-        return { title: key, dataIndex: key };
+      Object.entries(mockResult[0]).map(([k, v], idx) => {
+        return { field: k, value: v, key: idx };
       })
     );
   };
@@ -37,9 +36,11 @@ function QueryTable() {
       </Row>
       <Row style={rowStyle}>
         <Table
+          bordered={true}
           columns={columns}
           dataSource={result}
           locale={{ emptyText: "Search for a gene to view results" }}
+          pagination={false}
         />
       </Row>
     </>
