@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input, Row, Space, Table, Typography } from "antd";
 import * as CSS from "csstype";
-import { result as mockResult } from "./mock";
+import { getGeneData } from "./api";
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -25,9 +25,10 @@ function QueryTable() {
     { title: "Value", dataIndex: "value" },
   ];
 
-  const handleSearch = (gene: string) => {
+  const handleSearch = async (gene: string) => {
+    const res = await getGeneData(gene);
     setResult(
-      Object.entries(mockResult[0]).map(([k, v], idx) => {
+      Object.entries(res.data[0]).map(([k, v], idx) => {
         return { field: k, value: v, key: idx };
       })
     );
