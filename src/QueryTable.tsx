@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Input, Row, Select, Space, Table, Typography } from "antd";
+import { Alert, Input, Row, Select, Space, Table, Typography } from "antd";
 import * as CSS from "csstype";
 import { getGeneData } from "./api";
 
@@ -123,6 +123,7 @@ const columnOptions = [
 function QueryTable() {
   const [result, setResult] = useState<Object[]>([]);
   const [customColumns, setCustomColumns] = useState<string[]>([]);
+  const [alertText, setAlertText] = useState<string | null>(null);
 
   const children = columnOptions.map((option) => {
     return (
@@ -133,9 +134,15 @@ function QueryTable() {
   });
 
   const handleSearch = async (gene: string) => {
+    if (!gene) {
+      return setAlertText("Please enter a gene name.");
+    }
     const res = await getGeneData(gene, customColumns);
+    if (res.length === 0) {
+      return setAlertText(`${gene} not found! Please try another gene.`);
+    }
     setResult(
-      Object.entries(res.data[0]).map(([k, v], idx) => {
+      Object.entries(res).map(([k, v], idx) => {
         return { field: k, value: v, key: idx };
       })
     );
@@ -151,8 +158,22 @@ function QueryTable() {
         <Text>Search for a gene to view results </Text>
       </Row>
       <Row style={rowStyle}>
-        <Search onSearch={handleSearch} style={searchBarStyle} />
+        <Search
+          onSearch={handleSearch}
+          placeholder="Enter gene name here, eg: MAPK14"
+          style={searchBarStyle}
+        />
       </Row>
+      {alertText && (
+        <Row style={rowStyle}>
+          <Alert
+            message={alertText}
+            type="error"
+            closable
+            onClose={() => setAlertText(null)}
+          />
+        </Row>
+      )}
       <Row style={rowStyle}>
         <Text>Advanced Options </Text>
       </Row>
@@ -167,8 +188,8 @@ function QueryTable() {
           {children}
         </Select>
       </Row>
-      <Row style={rowStyle}>
-        {result.length > 0 && (
+      {result.length > 0 && (
+        <Row style={rowStyle}>
           <Table
             bordered={true}
             columns={columns}
@@ -176,8 +197,8 @@ function QueryTable() {
             locale={{ emptyText: "Search for a gene to view results" }}
             pagination={false}
           />
-        )}
-      </Row>
+        </Row>
+      )}
     </Space>
   );
 }
