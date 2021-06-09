@@ -5,7 +5,10 @@ const apiURL = "http://localhost:8000";
 
 export const getGeneData = (gene: string, columns: Array<string> = []) => {
   return axios.get(apiURL, {
-    params: { gene, ...(columns.length > 0 && { columns }) },
+    params: {
+      gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE
+      ...(columns.length > 0 && { columns }),
+    },
     paramsSerializer: function (params) {
       return qs.stringify(params, { arrayFormat: "repeat" });
     },
