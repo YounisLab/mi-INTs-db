@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { Alert, Input, Row, Select, Space, Table, Typography } from "antd";
+import {
+  Alert,
+  Button,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+  Typography,
+} from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
+import { CSVLink } from "react-csv";
 import * as CSS from "csstype";
 import { getGeneData } from "./api";
 
@@ -19,9 +30,10 @@ const spaceStyle: CSS.Properties = {
   width: "100%",
 };
 
+// title and dataIndex keys for Table, label and key for CSVLink
 const columns = [
-  { title: "Field", dataIndex: "field" },
-  { title: "Value", dataIndex: "value" },
+  { title: "Field", label: "Field", dataIndex: "field", key: "field" },
+  { title: "Value", label: "Value", dataIndex: "value", key: "value" },
 ];
 
 const columnOptions = [
@@ -190,15 +202,24 @@ function QueryTable() {
         </Select>
       </Row>
       {result.length > 0 && (
-        <Row style={rowStyle}>
-          <Table
-            bordered={true}
-            columns={columns}
-            dataSource={result}
-            locale={{ emptyText: "Search for a gene to view results" }}
-            pagination={false}
-          />
-        </Row>
+        <>
+          <Row style={rowStyle}>
+            <Table
+              bordered={true}
+              columns={columns}
+              dataSource={result}
+              locale={{ emptyText: "Search for a gene to view results" }}
+              pagination={false}
+            />
+          </Row>
+          <Row style={rowStyle}>
+            <CSVLink data={result} headers={columns} filename={"table.csv"}>
+              <Button type="primary" icon={<DownloadOutlined />} size={"large"}>
+                Export as .csv
+              </Button>
+            </CSVLink>
+          </Row>
+        </>
       )}
     </Space>
   );
