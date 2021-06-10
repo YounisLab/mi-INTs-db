@@ -1,40 +1,18 @@
 import { useState } from "react";
-import {
-  Alert,
-  Button,
-  Input,
-  Row,
-  Select,
-  Space,
-  Table,
-  Typography,
-} from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
-import { CSVLink } from "react-csv";
+import { Alert, Input, Select, Typography } from "antd";
 import * as CSS from "csstype";
-import { getGeneData } from "./api";
+import { getGeneData } from "../api";
+
+import TableView from "./TableView";
+import Row from "./Row";
 
 const { Search } = Input;
 const { Option } = Select;
 const { Text } = Typography;
 
-const rowStyle: CSS.Properties = {
-  justifyContent: "center",
-};
-
 const searchBarStyle: CSS.Properties = {
   width: "40%",
 };
-
-const spaceStyle: CSS.Properties = {
-  width: "100%",
-};
-
-// title and dataIndex keys for Table, label and key for CSVLink
-const columns = [
-  { title: "Field", label: "Field", dataIndex: "field", key: "field" },
-  { title: "Value", label: "Value", dataIndex: "value", key: "value" },
-];
 
 const columnOptions = [
   "Gene_name",
@@ -166,11 +144,11 @@ function QueryTable() {
   }
 
   return (
-    <Space direction="vertical" size="middle" style={spaceStyle}>
-      <Row style={rowStyle}>
+    <>
+      <Row>
         <Text>Search for a gene to view results </Text>
       </Row>
-      <Row style={rowStyle}>
+      <Row>
         <Search
           onSearch={handleSearch}
           placeholder="Enter gene name here, eg: MAPK14"
@@ -178,7 +156,7 @@ function QueryTable() {
         />
       </Row>
       {alertText && (
-        <Row style={rowStyle}>
+        <Row>
           <Alert
             message={alertText}
             type="error"
@@ -187,10 +165,10 @@ function QueryTable() {
           />
         </Row>
       )}
-      <Row style={rowStyle}>
+      <Row>
         <Text>Advanced Options </Text>
       </Row>
-      <Row style={rowStyle}>
+      <Row>
         <Select
           mode="multiple"
           allowClear
@@ -201,27 +179,8 @@ function QueryTable() {
           {children}
         </Select>
       </Row>
-      {result.length > 0 && (
-        <>
-          <Row style={rowStyle}>
-            <Table
-              bordered={true}
-              columns={columns}
-              dataSource={result}
-              locale={{ emptyText: "Search for a gene to view results" }}
-              pagination={false}
-            />
-          </Row>
-          <Row style={rowStyle}>
-            <CSVLink data={result} headers={columns} filename={"table.csv"}>
-              <Button type="primary" icon={<DownloadOutlined />} size={"large"}>
-                Export as .csv
-              </Button>
-            </CSVLink>
-          </Row>
-        </>
-      )}
-    </Space>
+      {result.length > 0 && <TableView data={result} />}
+    </>
   );
 }
 

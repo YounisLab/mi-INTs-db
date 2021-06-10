@@ -1,7 +1,7 @@
 import "./App.css";
 import { Layout } from "antd";
 import * as CSS from "csstype";
-import QueryTable from "./QueryTable";
+import QueryTable from "./components/QueryTable";
 const { Header, Content } = Layout;
 
 const h1style: CSS.Properties = {
