@@ -134,6 +134,7 @@ function QueryTable() {
   });
 
   const handleSearch = async (gene: string) => {
+    setAlertText(null);
     if (!gene) {
       return setAlertText("Please enter a gene name.");
     }
