@@ -3,12 +3,12 @@ import qs from "qs";
 
 const apiURL = "http://localhost:8000";
 
-export const getGeneData = (gene: string, columns: Array<string> = []) => {
+export const getGeneData = (gene: string, cols: Array<string> = []) => {
   return axios
     .get(`${apiURL}/gene`, {
       params: {
         gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE
-        ...(columns.length > 0 && { columns }),
+        ...(cols.length > 0 && { cols }),
       },
       paramsSerializer: function (params) {
         return qs.stringify(params, { arrayFormat: "repeat" });
