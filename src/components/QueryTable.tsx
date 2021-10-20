@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Alert, Input, Select, Typography } from "antd";
 import * as CSS from "csstype";
-import { getGeneData } from "../api";
+import { getGeneCoordData, getGeneData } from "../api";
 
+import GeneView, { GeneViewProps } from "./GeneView";
 import TableView from "./TableView";
 import Row from "./Row";
 
@@ -111,9 +112,10 @@ const columnOptions = [
 ];
 
 function QueryTable() {
-  const [result, setResult] = useState<Object[]>([]);
+  const [geneInfo, setGeneInfo] = useState<Object[]>([]);
   const [customColumns, setCustomColumns] = useState<string[]>([]);
   const [alertText, setAlertText] = useState<string | null>(null);
+  const [geneCoords, setGeneCoords] = useState<GeneViewProps>({});
 
   const children = columnOptions.map((option) => {
     return (
@@ -128,15 +130,30 @@ function QueryTable() {
     if (!gene) {
       return setAlertText("Please enter a gene name.");
     }
-    const res = await getGeneData(gene, customColumns);
-    if (res.length === 0) {
+    const geneInfo = await getGeneData(gene, customColumns);
+    const geneCoords = await getGeneCoordData(gene);
+    if (geneInfo.length === 0) {
       return setAlertText(`${gene} not found! Please try another gene.`);
     }
-    setResult(
-      Object.entries(res).map(([k, v], idx) => {
+    setGeneInfo(
+      Object.entries(geneInfo).map(([k, v], idx) => {
         return { field: k, value: v, key: idx };
       })
     );
+    if (!Boolean(geneCoords)) {
+      setGeneCoords({});
+      return setAlertText(`${gene} coordinate information unavailable`);
+    }
+    setGeneCoords({
+      gene: geneCoords.gene,
+      mi_no: geneCoords.mi_no,
+      exon_coords: JSON.parse(
+        geneCoords.exon_coords.replace(/\(/g, "[").replace(/\)/g, "]")
+      ),
+      intron_coords: JSON.parse(
+        geneCoords.intron_coords.replace(/\(/g, "[").replace(/\)/g, "]")
+      ),
+    });
   };
 
   function handleSelectionChange(value: Array<string>) {
@@ -179,7 +196,10 @@ function QueryTable() {
           {children}
         </Select>
       </Row>
-      {result.length > 0 && <TableView data={result} />}
+      <Row>
+        <GeneView {...geneCoords} />
+      </Row>
+      {geneInfo.length > 0 && <TableView data={geneInfo} />}
     </>
   );
 }

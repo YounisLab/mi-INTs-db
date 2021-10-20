@@ -22,3 +22,19 @@ export const getGeneData = (gene: string, columns: Array<string> = []) => {
       return [];
     });
 };
+
+export const getGeneCoordData = (gene: string) => {
+  return axios
+    .get(`${apiURL}/coordinates`, {
+      params: {
+        gene: gene.toUpperCase(),
+      },
+    })
+    .then((resp) => {
+      return resp.data[0];
+    })
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
+};
