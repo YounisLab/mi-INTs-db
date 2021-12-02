@@ -1,7 +1,7 @@
 import axios from "axios";
 import qs from "qs";
 
-const apiURL = process.env.BACKEND_URL || "http://localhost:8000";
+const apiURL = process.env.BACKEND_URL || "https://mi-ints-db-backend.herokuapp.com";
 
 export const getGeneData = (gene: string, cols: Array<string> = []) => {
   return axios
